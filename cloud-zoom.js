@@ -25,16 +25,16 @@
         return str;
     }
 
-    function CloudZoom(jWin, opts) {
+    function CloudZoom($jWin, opts) {
 
-        var sImg = $('img', jWin);
+        var $sImg = $('img', $jWin);
         var img1;
         var img2;
-        var zoomDiv = null;
+        var $zoomDiv = null;
         var $mouseTrap = null;
-        var lens = null;
+        var $lens = null;
         var $tint = null;
-        var softFocus = null;
+        var $softFocus = null;
         var $ie6Fix = null;
         var zoomImage;
         var controlTimer = 0;
@@ -52,9 +52,9 @@
         //var ctx = this;
         setTimeout(function () {
             if ($mouseTrap === null) {
-                var w = jWin.width();
-                jWin.parent().append(format('<div style="width:%0px;position:absolute;top:75%;left:%1px;text-align:center" class="cloud-zoom-loading" >Loading...</div>', w / 3, (w / 2) - (w / 6)));
-                $('cloud-zoom-loading', jWin.parent()).css('opacity', 0.5)
+                var w = $jWin.width();
+                $jWin.parent().append(format('<div style="width:%0px;position:absolute;top:75%;left:%1px;text-align:center" class="cloud-zoom-loading" >Loading...</div>', w / 3, (w / 2) - (w / 6)));
+                $('cloud-zoom-loading', $jWin.parent()).css('opacity', 0.5)
             }
         }, 200);
 
@@ -70,35 +70,35 @@
         // Removes cursor, tint layer, blur layer etc.
         this.removeBits = function () {
             //$mouseTrap.unbind();
-            if (lens) {
-                lens.remove();
-                lens = null;
+            if ($lens) {
+                $lens.remove();
+                $lens = null;
             }
             if ($tint) {
                 $tint.remove();
                 $tint = null;
             }
-            if (softFocus) {
-                softFocus.remove();
-                softFocus = null;
+            if ($softFocus) {
+                $softFocus.remove();
+                $softFocus = null;
             }
             ie6FixRemove();
 
-            $('.cloud-zoom-loading', jWin.parent()).remove();
+            $('.cloud-zoom-loading', $jWin.parent()).remove();
         };
 
 
         this.destroy = function () {
-            jWin.data('zoom', null);
+            $jWin.data('zoom', null);
 
             if ($mouseTrap) {
                 $mouseTrap.unbind();
                 $mouseTrap.remove();
                 $mouseTrap = null;
             }
-            if (zoomDiv) {
-                zoomDiv.remove();
-                zoomDiv = null;
+            if ($zoomDiv) {
+                $zoomDiv.remove();
+                $zoomDiv = null;
             }
             //ie6FixRemove();
             this.removeBits();
@@ -109,44 +109,44 @@
         // This is called when the zoom window has faded out so it can be removed.
         this.fadedOut = function () {
 
-            if (zoomDiv) {
-                zoomDiv.remove();
-                zoomDiv = null;
+            if ($zoomDiv) {
+                $zoomDiv.remove();
+                $zoomDiv = null;
             }
             this.removeBits();
         //ie6FixRemove();
         };
 
         this.controlLoop = function () {
-            if (lens) {
-                var x = (mx - sImg.offset().left - (cw * 0.5)) >> 0;
-                var y = (my - sImg.offset().top - (ch * 0.5)) >> 0;
+            if ($lens) {
+                var x = (mx - $sImg.offset().left - (cw * 0.5)) >> 0;
+                var y = (my - $sImg.offset().top - (ch * 0.5)) >> 0;
 
                 if (x < 0) {
                     x = 0;
                 }
-                else if (x > (sImg.outerWidth() - cw)) {
-                    x = (sImg.outerWidth() - cw);
+                else if (x > ($sImg.outerWidth() - cw)) {
+                    x = ($sImg.outerWidth() - cw);
                 }
                 if (y < 0) {
                     y = 0;
                 }
-                else if (y > (sImg.outerHeight() - ch)) {
-                    y = (sImg.outerHeight() - ch);
+                else if (y > ($sImg.outerHeight() - ch)) {
+                    y = ($sImg.outerHeight() - ch);
                 }
 
-                lens.css({
+                $lens.css({
                     left: x,
                     top: y
                 });
-                lens.css('background-position', (-x) + 'px ' + (-y) + 'px');
+                $lens.css('background-position', (-x) + 'px ' + (-y) + 'px');
 
-                destU = (((x) / sImg.outerWidth()) * zoomImage.width) >> 0;
-                destV = (((y) / sImg.outerHeight()) * zoomImage.height) >> 0;
+                destU = (((x) / $sImg.outerWidth()) * zoomImage.width) >> 0;
+                destV = (((y) / $sImg.outerHeight()) * zoomImage.height) >> 0;
                 currU += (destU - currU) / opts.smoothMove;
                 currV += (destV - currV) / opts.smoothMove;
 
-                zoomDiv.css('background-position', (-(currU >> 0) + 'px ') + (-(currV >> 0) + 'px'));
+                $zoomDiv.css('background-position', (-(currU >> 0) + 'px ') + (-(currV >> 0) + 'px'));
             }
             controlTimer = setTimeout(function () {
                 ctx.controlLoop();
@@ -169,7 +169,7 @@
         /* Init function start.  */
         this.init = function () {
             // Remove loading message (if present);
-            $('.cloud-zoom-loading', jWin.parent()).remove();
+            $('.cloud-zoom-loading', $jWin.parent()).remove();
 
 
             /* Add a box (mouseTrap) over the small image to trap mouse events.
@@ -178,11 +178,11 @@
                transparent parts of a div.
             */
             var $m = $("<div class='mousetrap' style='background-image:url(\"" + scriptPath + "/blank.png\")" + "\'></div>");
-            $mouseTrap = jWin.parent().append($m).find(':last');
-            $mouseTrap = $('.mousetrap',jWin.parent());
+            $mouseTrap = $jWin.parent().append($m).find(':last');
+            $mouseTrap = $('.mousetrap',$jWin.parent());
             $mouseTrap.css({
-                width:sImg.outerWidth(),
-                height:sImg.outerHeight(),
+                width:$sImg.outerWidth(),
+                height:$sImg.outerHeight(),
                 top:0,
                 left:0,
                 position:'absolute',
@@ -200,16 +200,16 @@
             $mouseTrap.bind('mouseleave', this, function (event) {
                 clearTimeout(controlTimer);
                 //event.data.removeBits();
-                if(lens) {
-                    lens.fadeOut(299);
+                if($lens) {
+                    $lens.fadeOut(299);
                 }
                 if($tint) {
                     $tint.fadeOut(299);
                 }
-                if(softFocus) {
-                    softFocus.fadeOut(299);
+                if($softFocus) {
+                    $softFocus.fadeOut(299);
                 }
-                zoomDiv.fadeOut(300, function () {
+                $zoomDiv.fadeOut(300, function () {
                     ctx.fadedOut();
                 });
                 return false;
@@ -219,16 +219,16 @@
                 mx = event.pageX;
                 my = event.pageY;
                 zw = event.data;
-                if (zoomDiv) {
-                    zoomDiv.stop(true, false);
-                    zoomDiv.remove();
+                if ($zoomDiv) {
+                    $zoomDiv.stop(true, false);
+                    $zoomDiv.remove();
                 }
 
                 var xPos = opts.adjustX,
                 yPos = opts.adjustY;
 
-                var siw = sImg.outerWidth();
-                var sih = sImg.outerHeight();
+                var siw = $sImg.outerWidth();
+                var sih = $sImg.outerHeight();
 
                 var w = opts.zoomWidth;
                 var h = opts.zoomHeight;
@@ -239,7 +239,7 @@
                     h = sih;
                 }
                 //$('#info').text( xPos + ' ' + yPos + ' ' + siw + ' ' + sih );
-                var appendTo = jWin.parent(); // attach to the wrapper
+                var appendTo = $jWin.parent(); // attach to the wrapper
                 switch (opts.position) {
                     case 'top':
                         yPos -= h; // + opts.adjustY;
@@ -262,7 +262,7 @@
                         appendTo = $('#' + opts.position);
                         // If dom element doesn't exit, just use 'right' position as default.
                         if (!appendTo.length) {
-                            appendTo = jWin;
+                            appendTo = $jWin;
                             xPos += siw; //+ opts.adjustX;
                             yPos += sih; // + opts.adjustY;
                         } else {
@@ -271,12 +271,12 @@
                         }
                 }
 
-                zoomDiv = appendTo.append(format('<div id="cloud-zoom-big" class="cloud-zoom-big" style="display:none;position:absolute;left:%0px;top:%1px;width:%2px;height:%3px;background-image:url(\'%4\');z-index:99;"></div>', xPos, yPos, w, h, zoomImage.src)).find(':last');
-                zoomDiv = $('.cloud-zoom-big',appendTo);
+                $zoomDiv = appendTo.append(format('<div id="cloud-zoom-big" class="cloud-zoom-big" style="display:none;position:absolute;left:%0px;top:%1px;width:%2px;height:%3px;background-image:url(\'%4\');z-index:99;"></div>', xPos, yPos, w, h, zoomImage.src)).find(':last');
+                $zoomDiv = $('.cloud-zoom-big',appendTo);
                 // Add the title from title tag.
-                if (sImg.attr('title') && opts.showTitle) {
-                    zoomDiv.append(format('<div class="cloud-zoom-title">%0</div>', sImg.attr('title')));
-                    $('.cloud-zoom-title', zoomDiv).css('opacity', opts.titleOpacity);
+                if ($sImg.attr('title') && opts.showTitle) {
+                    $zoomDiv.append(format('<div class="cloud-zoom-title">%0</div>', $sImg.attr('title')));
+                    $('.cloud-zoom-title', $zoomDiv).css('opacity', opts.titleOpacity);
                 }
 
                 // Fix ie6 select elements wrong z-index bug. Placing an iFrame over the select element solves the issue...
@@ -288,30 +288,30 @@
                         zIndex: 99,
                         width: w,
                         height: h
-                    }).insertBefore(zoomDiv);
+                    }).insertBefore($zoomDiv);
                 }
 
-                zoomDiv.fadeIn(500);
+                $zoomDiv.fadeIn(500);
 
-                if (lens) {
-                    lens.remove();
-                    lens = null;
+                if ($lens) {
+                    $lens.remove();
+                    $lens = null;
                 } /* Work out size of cursor */
-                cw = (sImg.outerWidth() / zoomImage.width) * zoomDiv.width();
-                ch = (sImg.outerHeight() / zoomImage.height) * zoomDiv.height();
+                cw = ($sImg.outerWidth() / zoomImage.width) * $zoomDiv.width();
+                ch = ($sImg.outerHeight() / zoomImage.height) * $zoomDiv.height();
 
                 // Attach mouse, initially invisible to prevent first frame glitch
-                lens = jWin.append(format("<div class = 'cloud-zoom-lens' style='display:none;z-index:98;position:absolute;width:%0px;height:%1px;'></div>", cw, ch)).find(':last');
-                lens = $('.cloud-zoom-lens',jWin);
-                $mouseTrap.css('cursor', lens.css('cursor'));
+                $lens = $jWin.append(format("<div class = 'cloud-zoom-lens' style='display:none;z-index:98;position:absolute;width:%0px;height:%1px;'></div>", cw, ch)).find(':last');
+                $lens = $('.cloud-zoom-lens',$jWin);
+                $mouseTrap.css('cursor', $lens.css('cursor'));
 
                 var noTrans = false;
 
                 // Init tint layer if needed. (Not relevant if using inside mode)
                 if (opts.tint) {
-                    lens.css('background', 'url("' + sImg.attr('src') + '")');
-                    $tint = jWin.append(format('<div class="cloud-zoom-tint" style="display:none;position:absolute; left:0px; top:0px; width:%0px; height:%1px; background-color:%2;" />', sImg.outerWidth(), sImg.outerHeight(), opts.tint)).find(':last');
-                    $tint = $('.cloud-zoom-tint',jWin);
+                    $lens.css('background', 'url("' + $sImg.attr('src') + '")');
+                    $tint = $jWin.append(format('<div class="cloud-zoom-tint" style="display:none;position:absolute; left:0px; top:0px; width:%0px; height:%1px; background-color:%2;" />', $sImg.outerWidth(), $sImg.outerHeight(), opts.tint)).find(':last');
+                    $tint = $('.cloud-zoom-tint',$jWin);
 
                     $tint.css('opacity', opts.tintOpacity);
                     noTrans = true;
@@ -319,20 +319,20 @@
 
                 }
                 if (opts.softFocus) {
-                    lens.css('background', 'url("' + sImg.attr('src') + '")');
-                    jWin.append(format('<div class="cloud-zoom-soft" style="position:absolute;display:none;top:2px; left:2px; width:%0px; height:%1px;" />', sImg.outerWidth() - 2, sImg.outerHeight() - 2, opts.tint));
-                    softFocus = $('.cloud-zoom-soft',jWin);
-                    softFocus.css('background', 'url("' + sImg.attr('src') + '")');
-                    softFocus.css('opacity', 0.5);
+                    $lens.css('background', 'url("' + $sImg.attr('src') + '")');
+                    $jWin.append(format('<div class="cloud-zoom-soft" style="position:absolute;display:none;top:2px; left:2px; width:%0px; height:%1px;" />', $sImg.outerWidth() - 2, $sImg.outerHeight() - 2, opts.tint));
+                    $softFocus = $('.cloud-zoom-soft',$jWin);
+                    $softFocus.css('background', 'url("' + $sImg.attr('src') + '")');
+                    $softFocus.css('opacity', 0.5);
                     noTrans = true;
-                    softFocus.fadeIn(500);
+                    $softFocus.fadeIn(500);
                 }
 
                 if (!noTrans) {
-                    lens.css('opacity', opts.lensOpacity);
+                    $lens.css('opacity', opts.lensOpacity);
                 }
                 if ( opts.position !== 'inside' ) {
-                    lens.fadeIn(500);
+                    $lens.fadeIn(500);
                 }
 
                 // Start processing.
@@ -346,13 +346,13 @@
         $(img1).load(function () {
             ctx.init2(this, 0);
         });
-        img1.src = sImg.attr('src');
+        img1.src = $sImg.attr('src');
 
         img2 = new Image();
         $(img2).load(function () {
             ctx.init2(this, 1);
         });
-        img2.src = jWin.attr('href');
+        img2.src = $jWin.attr('href');
     }
 
     $.fn.CloudZoom = function (options) {
@@ -362,30 +362,31 @@
         } catch (e) {}
         this.each(function () {
             var relOpts, opts;
+            var $this = $(this);
             // Hmm...eval...slap on wrist.
-            eval('var a = {' + $(this).attr('rel') + '}');
+            eval('var a = {' + $this.attr('rel') + '}');
             relOpts = a;
-            if ($(this).is('.cloud-zoom')) {
-                $(this).css({
+            if ($this.is('.cloud-zoom')) {
+                $this.css({
                     'position': 'relative',
                     'display': 'block'
                 });
-                $('img', $(this)).css({
+                $('img', $this).css({
                     'display': 'block'
                 });
                 // Wrap an outer div around the link so we can attach things without them becoming part of the link.
                 // But not if wrap already exists.
-                if ($(this).parent().attr('id') != 'wrap') {
-                    $(this).wrap('<div id="wrap" style="top:0px;z-index:9999;position:relative;"></div>');
+                if ($this.parent().attr('id') != 'wrap') {
+                    $this.wrap('<div id="wrap" style="top:0px;z-index:9999;position:relative;"></div>');
                 }
                 opts = $.extend({}, $.fn.CloudZoom.defaults, options);
                 opts = $.extend({}, opts, relOpts);
-                $(this).data('zoom', new CloudZoom($(this), opts));
+                $this.data('zoom', new CloudZoom($this, opts));
 
-            } else if ($(this).is('.cloud-zoom-gallery')) {
+            } else if ($this.is('.cloud-zoom-gallery')) {
                 opts = $.extend({}, relOpts, options);
-                $(this).data('relOpts', opts);
-                $(this).bind('click', $(this), function (event) {
+                $this.data('relOpts', opts);
+                $this.bind('click', $this, function (event) {
                     var data = event.data.data('relOpts');
                     // Destroy the previous zoom
                     $('#' + data.useZoom).data('zoom').destroy();
