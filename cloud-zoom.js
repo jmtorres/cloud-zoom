@@ -239,7 +239,7 @@
                     h = sih;
                 }
                 //$('#info').text( xPos + ' ' + yPos + ' ' + siw + ' ' + sih );
-                var appendTo = $jWin.parent(); // attach to the wrapper
+                var $appendTo = $jWin.parent(); // attach to the wrapper
                 switch (opts.position) {
                     case 'top':
                         yPos -= h; // + opts.adjustY;
@@ -259,20 +259,20 @@
                         break;
                     // All other values, try and find an id in the dom to attach to.
                     default:
-                        appendTo = $('#' + opts.position);
+                        $appendTo = $('#' + opts.position);
                         // If dom element doesn't exit, just use 'right' position as default.
-                        if (!appendTo.length) {
-                            appendTo = $jWin;
+                        if (!$appendTo.length) {
+                            $appendTo = $jWin;
                             xPos += siw; //+ opts.adjustX;
                             yPos += sih; // + opts.adjustY;
                         } else {
-                            w = appendTo.innerWidth();
-                            h = appendTo.innerHeight();
+                            w = $appendTo.innerWidth();
+                            h = $appendTo.innerHeight();
                         }
                 }
 
-                $zoomDiv = appendTo.append(format('<div id="cloud-zoom-big" class="cloud-zoom-big" style="display:none;position:absolute;left:%0px;top:%1px;width:%2px;height:%3px;background-image:url(\'%4\');z-index:99;"></div>', xPos, yPos, w, h, zoomImage.src)).find(':last');
-                $zoomDiv = $('.cloud-zoom-big',appendTo);
+                $zoomDiv = $appendTo.append(format('<div id="cloud-zoom-big" class="cloud-zoom-big" style="display:none;position:absolute;left:%0px;top:%1px;width:%2px;height:%3px;background-image:url(\'%4\');z-index:99;"></div>', xPos, yPos, w, h, zoomImage.src)).find(':last');
+                $zoomDiv = $('.cloud-zoom-big',$appendTo);
                 // Add the title from title tag.
                 if ($sImg.attr('title') && opts.showTitle) {
                     $zoomDiv.append(format('<div class="cloud-zoom-title">%0</div>', $sImg.attr('title')));
