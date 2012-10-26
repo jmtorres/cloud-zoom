@@ -9,11 +9,6 @@
 //////////////////////////////////////////////////////////////////////////////////
 (function ($) {
 
-
-    $(document).ready(function () {
-        $('.cloud-zoom, .cloud-zoom-gallery').CloudZoom();
-    });
-
     function CloudZoom($jWin, opts) {
         var $sImg = $('img', $jWin);
         var img1;
