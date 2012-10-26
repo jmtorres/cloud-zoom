@@ -9,24 +9,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 (function ($) {
 
-    // Get the path of executing script.
-    var scripts = document.getElementsByTagName("script");
-    var last = scripts[scripts.length-1].src.lastIndexOf('/');
-    var scriptPath = scripts[scripts.length-1].src.slice(0,last);
 
     $(document).ready(function () {
         $('.cloud-zoom, .cloud-zoom-gallery').CloudZoom();
     });
 
-    function format(str) {
-        for (var i = 1; i < arguments.length; i++) {
-            str = str.replace('%' + (i - 1), arguments[i]);
-        }
-        return str;
-    }
-
     function CloudZoom($jWin, opts) {
-
         var $sImg = $('img', $jWin);
         var img1;
         var img2;
@@ -53,8 +41,16 @@
         setTimeout(function () {
             if ($mouseTrap === null) {
                 var w = $jWin.width();
-                $jWin.parent().append(format('<div style="width:%0px;position:absolute;top:75%;left:%1px;text-align:center" class="cloud-zoom-loading" >Loading...</div>', w / 3, (w / 2) - (w / 6)));
-                $('cloud-zoom-loading', $jWin.parent()).css('opacity', 0.5)
+                $zoomLoading = $('<div class="cloud-zoom-loading" >Loading...</div>');
+                $zoomLoading.css({
+                  'position': 'absolute',
+                  'text-align': 'center',
+                  'opacity': 0.5,
+                  'top': '75%',
+                  'left': (w / 2) - (w / 6) + 'px',
+                  'width': w / 3 + 'px'
+                });
+                $jWin.parent().append($zoomLoading);
             }
         }, 200);
 
@@ -102,19 +98,18 @@
             }
             //ie6FixRemove();
             this.removeBits();
-        // DON'T FORGET TO REMOVE JQUERY 'DATA' VALUES
+            // DON'T FORGET TO REMOVE JQUERY 'DATA' VALUES
         };
 
 
         // This is called when the zoom window has faded out so it can be removed.
         this.fadedOut = function () {
-
             if ($zoomDiv) {
                 $zoomDiv.remove();
                 $zoomDiv = null;
             }
             this.removeBits();
-        //ie6FixRemove();
+            //ie6FixRemove();
         };
 
         this.controlLoop = function () {
@@ -177,17 +172,17 @@
                We need the dummy background image as IE does not trap mouse events on
                transparent parts of a div.
             */
-            var $m = $("<div class='mousetrap' style='background-image:url(\"" + scriptPath + "/blank.png\")" + "\'></div>");
-            $mouseTrap = $jWin.parent().append($m).find(':last');
-            $mouseTrap = $('.mousetrap',$jWin.parent());
+            var $mouseTrap = $("<div class='mousetrap'/>");
             $mouseTrap.css({
-                width:$sImg.outerWidth(),
-                height:$sImg.outerHeight(),
-                top:0,
-                left:0,
-                position:'absolute',
-                zIndex:9999
+                //'background-image': url(),
+                'width': $sImg.outerWidth(),
+                'height': $sImg.outerHeight(),
+                'top': 0,
+                'left': 0,
+                'position': 'absolute',
+                'z-index': 9999
             });
+            $jWin.parent().append($mouseTrap);
             //////////////////////////////////////////////////////////////////////
             /* Do as little as possible in mousemove event to prevent slowdown. */
             $mouseTrap.bind('mousemove touchmove', this, function (event) {
@@ -240,7 +235,7 @@
                 }
 
                 var xPos = opts.adjustX,
-                yPos = opts.adjustY;
+                    yPos = opts.adjustY;
 
                 var siw = $sImg.outerWidth();
                 var sih = $sImg.outerHeight();
@@ -286,12 +281,25 @@
                         }
                 }
 
-                $zoomDiv = $appendTo.append(format('<div id="cloud-zoom-big" class="cloud-zoom-big" style="display:none;position:absolute;left:%0px;top:%1px;width:%2px;height:%3px;background-image:url(\'%4\');z-index:99;"></div>', xPos, yPos, w, h, zoomImage.src)).find(':last');
-                $zoomDiv = $('.cloud-zoom-big',$appendTo);
+                $zoomDiv = $('<div id="cloud-zoom-big" class="cloud-zoom-big"/>');
+                $zoomDiv.css({
+                    'display': 'none',
+                    'position': 'absolute',
+                    'z-index': 99,
+                    'left': xPos + 'px',
+                    'top': yPos + 'px',
+                    'width': w + 'px',
+                    'height': h + 'px',
+                    'background-image': 'url(' + zoomImage.src + ')'
+                });
+                $appendTo.append($zoomDiv);
                 // Add the title from title tag.
-                if ($sImg.attr('title') && opts.showTitle) {
-                    $zoomDiv.append(format('<div class="cloud-zoom-title">%0</div>', $sImg.attr('title')));
-                    $('.cloud-zoom-title', $zoomDiv).css('opacity', opts.titleOpacity);
+                if (opts.showTitle && $sImg.attr('title')) {
+                    $zoomDivTitle = $('<div class="cloud-zoom-title"/>');
+                    $zoomDivTitle
+                        .text($sImg.attr('title'))
+                        .css('opacity', opts.titleOpacity);
+                    $zoomDiv.append($zoomDivTitle);
                 }
 
                 // Fix ie6 select elements wrong z-index bug. Placing an iFrame over the select element solves the issue...
@@ -306,8 +314,6 @@
                     }).insertBefore($zoomDiv);
                 }
 
-                $zoomDiv.fadeIn('fast');
-
                 if ($lens) {
                     $lens.remove();
                     $lens = null;
@@ -316,44 +322,66 @@
                 ch = ($sImg.outerHeight() / zoomImage.height) * $zoomDiv.height();
 
                 // Attach mouse, initially invisible to prevent first frame glitch
-                $lens = $jWin.append(format("<div class = 'cloud-zoom-lens' style='display:none;z-index:98;position:absolute;width:%0px;height:%1px;'></div>", cw, ch)).find(':last');
-                $lens = $('.cloud-zoom-lens',$jWin);
+                $lens = $('<div class="cloud-zoom-lens"/>');
+                $lens.css({
+                  'display': 'none',
+                  'position': 'absolute',
+                  'z-index': 98,
+                  'width': cw + 'px',
+                  'height': ch + 'px'
+                });
+                $jWin.append($lens);
                 $mouseTrap.css('cursor', $lens.css('cursor'));
 
                 $jWin.fadeTo('fast', 0.5);
 
-                var noTrans = false;
+                    var noTrans = false;
 
-                // Init tint layer if needed. (Not relevant if using inside mode)
-                if (opts.tint) {
-                    $lens.css('background', 'url("' + $sImg.attr('src') + '")');
-                    $tint = $jWin.append(format('<div class="cloud-zoom-tint" style="display:none;position:absolute; left:0px; top:0px; width:%0px; height:%1px; background-color:%2;" />', $sImg.outerWidth(), $sImg.outerHeight(), opts.tint)).find(':last');
-                    $tint = $('.cloud-zoom-tint',$jWin);
+                    // Init tint layer if needed. (Not relevant if using inside mode)
+                    if (opts.tint) {
+                        $lens.css('background-image', 'url(' + $sImg.attr('src') + ')');
+                        $tint = $('<div class="cloud-zoom-tint"/>');
+                        $tint.css({
+                          'display': 'none',
+                          'position': 'absolute',
+                          'left': 0,
+                          'top': 0,
+                          'width': $sImg.outerWidth(),
+                          'height': $sImg.outerHeight(),
+                          'background-color': opts.tint,
+                          'opacity': opts.tintOpacity
+                        });
+                        $jWin.append($tint);
 
-                    $tint.css('opacity', opts.tintOpacity);
-                    noTrans = true;
-                    $tint.fadeIn('fast');
+                        noTrans = true;
+                        $tint.fadeIn('fast');
+                    }
+                    if (opts.softFocus) {
+                        $lens.css('background-image', 'url(' + $sImg.attr('src') + ')');
+                        $softFocus = $('<div class="cloud-zoom-soft"/>')
+                        $softFocus.css({
+                          'position': 'absolute',
+                          'display': 'none',
+                          'top': '2px',
+                          'left': '2px',
+                          'width': ($sImg.outerWidth() - 2) + 'px',
+                          'height': ($sImg.outerHeight() - 2) + 'px',
+                          'background-image': 'url(' + $sImg.attr('src') + ')',
+                          'opacity': 0.5
+                        });
+                        noTrans = true;
+                        $softFocus.fadeIn('fast');
+                    }
 
-                }
-                if (opts.softFocus) {
-                    $lens.css('background', 'url("' + $sImg.attr('src') + '")');
-                    $jWin.append(format('<div class="cloud-zoom-soft" style="position:absolute;display:none;top:2px; left:2px; width:%0px; height:%1px;" />', $sImg.outerWidth() - 2, $sImg.outerHeight() - 2, opts.tint));
-                    $softFocus = $('.cloud-zoom-soft',$jWin);
-                    $softFocus.css('background', 'url("' + $sImg.attr('src') + '")');
-                    $softFocus.css('opacity', 0.5);
-                    noTrans = true;
-                    $softFocus.fadeIn('fast');
-                }
+                    if (!noTrans) {
+                        $lens.css('opacity', opts.lensOpacity);
+                    }
+                    if ( opts.position !== 'inside' ) {
+                        $lens.fadeIn('fast');
+                    }
 
-                if (!noTrans) {
-                    $lens.css('opacity', opts.lensOpacity);
-                }
-                if ( opts.position !== 'inside' ) {
-                    $lens.fadeIn('fast');
-                }
-
-                // Start processing.
-                zw.controlLoop();
+                    // Start processing.
+                    zw.controlLoop();
 
                 return; // Don't return false here otherwise opera will not detect change of the mouse pointer type.
             });
@@ -394,7 +422,7 @@
                 // Wrap an outer div around the link so we can attach things without them becoming part of the link.
                 // But not if wrap already exists.
                 if ($this.parent().attr('id') != 'wrap') {
-                    $this.wrap('<div id="wrap" style="top:0px;z-index:9999;position:relative;"></div>');
+                  $this.wrap('<div id="wrap" style="top:0px;z-index:9999;position:relative;"></div>');
                 }
                 opts = $.extend({}, $.fn.CloudZoom.defaults, options);
                 opts = $.extend({}, opts, relOpts);
