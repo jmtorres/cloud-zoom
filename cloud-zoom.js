@@ -190,14 +190,19 @@
             });
             //////////////////////////////////////////////////////////////////////
             /* Do as little as possible in mousemove event to prevent slowdown. */
-            $mouseTrap.bind('mousemove', this, function (event) {
+            $mouseTrap.bind('mousemove touchmove', this, function (event) {
                 // Just update the mouse position
-                mx = event.pageX;
-                my = event.pageY;
-
+                if(event.originalEvent.touches && event.originalEvent.touches.length){
+                    mx = event.originalEvent.touches[0].pageX;
+                    my = event.originalEvent.touches[0].pageY;
+                }
+                else {
+                    mx = event.pageX;
+                    my = event.pageY;
+                }
             });
             //////////////////////////////////////////////////////////////////////
-            $mouseTrap.bind('mouseleave', this, function (event) {
+            $mouseTrap.bind('mouseleave touchend', this, function (event) {
                 clearTimeout(controlTimer);
                 //event.data.removeBits();
                 if($lens) {
@@ -215,9 +220,18 @@
                 return false;
             });
             //////////////////////////////////////////////////////////////////////
-            $mouseTrap.bind('mouseenter', this, function (event) {
-                mx = event.pageX;
-                my = event.pageY;
+            $mouseTrap.bind('mouseenter touchstart', this, function (event) {
+                if(!!('ontouchstart' in document.documentElement)){
+                    event.preventDefault();
+                }
+                if(event.originalEvent.touches && event.originalEvent.touches.length){
+                    mx = event.originalEvent.touches[0].pageX;
+                    my = event.originalEvent.touches[0].pageY;
+                }
+                else {
+                    mx = event.pageX;
+                    my = event.pageY;
+                }
                 zw = event.data;
                 if ($zoomDiv) {
                     $zoomDiv.stop(true, false);
