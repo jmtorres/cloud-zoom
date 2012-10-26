@@ -176,11 +176,24 @@
                We need the dummy background image as IE does not trap mouse events on
                transparent parts of a div.
             */
+            if($.fn.actual){
+                sImgDimensions = {
+                    'outerWidth': $sImg.actual('outerWidth'),
+                    'outerHeight': $sImg.actual('outerHeight'),
+                }
+            }
+            else {
+                sImgDimensions = {
+                    'outerWidth': $sImg.outerWidth(),
+                    'outerHeight': $sImg.outerHeight(),
+                }
+            }
+
             var $mouseTrap = $("<div class='mousetrap'/>");
             $mouseTrap.css({
                 //'background-image': url(),
-                'width': $sImg.outerWidth(),
-                'height': $sImg.outerHeight(),
+                'width': sImgDimensions.outerWidth,
+                'height': sImgDimensions.outerHeight,
                 'top': 0,
                 'left': 0,
                 'position': 'absolute',
