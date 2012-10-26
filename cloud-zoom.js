@@ -214,9 +214,10 @@
                 if($softFocus) {
                     $softFocus.fadeOut('fast');
                 }
-                $zoomDiv.fadeOut('fast', function () {
+                $zoomDiv.hide('scale', 'fast', function () {
                     ctx.fadedOut();
                 });
+                $jWin.fadeTo('fast', 1);
                 return false;
             });
             //////////////////////////////////////////////////////////////////////
@@ -318,6 +319,8 @@
                 $lens = $jWin.append(format("<div class = 'cloud-zoom-lens' style='display:none;z-index:98;position:absolute;width:%0px;height:%1px;'></div>", cw, ch)).find(':last');
                 $lens = $('.cloud-zoom-lens',$jWin);
                 $mouseTrap.css('cursor', $lens.css('cursor'));
+
+                $jWin.fadeTo('fast', 0.5);
 
                 var noTrans = false;
 
