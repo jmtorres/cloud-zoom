@@ -206,15 +206,15 @@
                 clearTimeout(controlTimer);
                 //event.data.removeBits();
                 if($lens) {
-                    $lens.fadeOut(299);
+                    $lens.fadeOut('fast');
                 }
                 if($tint) {
-                    $tint.fadeOut(299);
+                    $tint.fadeOut('fast');
                 }
                 if($softFocus) {
-                    $softFocus.fadeOut(299);
+                    $softFocus.fadeOut('fast');
                 }
-                $zoomDiv.fadeOut(300, function () {
+                $zoomDiv.fadeOut('fast', function () {
                     ctx.fadedOut();
                 });
                 return false;
@@ -305,7 +305,7 @@
                     }).insertBefore($zoomDiv);
                 }
 
-                $zoomDiv.fadeIn(500);
+                $zoomDiv.fadeIn('fast');
 
                 if ($lens) {
                     $lens.remove();
@@ -329,7 +329,7 @@
 
                     $tint.css('opacity', opts.tintOpacity);
                     noTrans = true;
-                    $tint.fadeIn(500);
+                    $tint.fadeIn('fast');
 
                 }
                 if (opts.softFocus) {
@@ -339,14 +339,14 @@
                     $softFocus.css('background', 'url("' + $sImg.attr('src') + '")');
                     $softFocus.css('opacity', 0.5);
                     noTrans = true;
-                    $softFocus.fadeIn(500);
+                    $softFocus.fadeIn('fast');
                 }
 
                 if (!noTrans) {
                     $lens.css('opacity', opts.lensOpacity);
                 }
                 if ( opts.position !== 'inside' ) {
-                    $lens.fadeIn(500);
+                    $lens.fadeIn('fast');
                 }
 
                 // Start processing.
