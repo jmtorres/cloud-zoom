@@ -113,6 +113,13 @@
         };
 
         this.controlLoop = function () {
+            ctx.positionLens();
+            controlTimer = setTimeout(function () {
+                ctx.controlLoop();
+            }, 30);
+        };
+
+        this.positionLens = function () {
             if ($lens) {
                 var x = (mx - $sImg.offset().left - (cw * 0.5)) >> 0;
                 var y = (my - $sImg.offset().top - (ch * 0.5)) >> 0;
@@ -143,10 +150,7 @@
 
                 $zoomDiv.css('background-position', (-(currU >> 0) + 'px ') + (-(currV >> 0) + 'px'));
             }
-            controlTimer = setTimeout(function () {
-                ctx.controlLoop();
-            }, 30);
-        };
+        }
 
         this.init2 = function (img, id) {
 
@@ -333,8 +337,11 @@
                 $jWin.append($lens);
                 $mouseTrap.css('cursor', $lens.css('cursor'));
 
+                zw.positionLens();
+
                 $jWin.fadeTo('fast', 0.5);
 
+                $zoomDiv.show('scale', {fade: true}, 'fast', function(){
                     var noTrans = false;
 
                     // Init tint layer if needed. (Not relevant if using inside mode)
@@ -382,6 +389,7 @@
 
                     // Start processing.
                     zw.controlLoop();
+                });
 
                 return; // Don't return false here otherwise opera will not detect change of the mouse pointer type.
             });
